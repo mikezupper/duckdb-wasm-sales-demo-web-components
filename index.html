@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DuckDB WASM • Data Explorer</title>
+    <link rel="stylesheet" href="./src/style.css">
+</head>
+<body>
+<div class="app-container">
+    <aside class="sidebar">
+        <header class="sidebar-header">
+            <h1>Data Explorer</h1>
+            <p class="subtitle">DuckDB + WASM</p>
+        </header>
+
+        <section class="filters">
+            <h2>Filters</h2>
+
+            <div class="filter-group">
+                <label for="date-range">Date Range</label>
+                <div class="date-range-slider">
+                    <input type="range" id="start-slider" min="0" max="100" value="0" aria-label="Start date">
+                    <input type="range" id="end-slider" min="0" max="100" value="100" aria-label="End date">
+                </div>
+                <div class="date-range-labels">
+                    <span id="start-label">2025-01-01</span>
+                    <span id="end-label">2025-06-30</span>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label for="fruit">Item Filter</label>
+                <div class="multi-select-wrapper">
+                    <button type="button" class="multi-select-trigger" id="fruit-trigger">
+                        <span id="fruit-label">All Items</span>
+                        <span class="arrow">▼</span>
+                    </button>
+                    <div class="multi-select-dropdown" id="fruit-dropdown">
+                        <label class="multi-select-option">
+                            <input type="checkbox" value="" data-all="true" checked>
+                            <span>All Items</span>
+                        </label>
+                        <div class="multi-select-divider"></div>
+                        <div id="fruit-options"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label for="page-size">Rows per Page</label>
+                <select id="page-size">
+                    <option value="5">5</option>
+                    <option value="10" selected>10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+            </div>
+        </section>
+
+        <section class="stats">
+            <h2>Summary</h2>
+            <div class="stat-cards">
+                <div class="stat-card">
+                    <div class="stat-label">Total Records</div>
+                    <div class="stat-value" id="total-records">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Date Range</div>
+                    <div class="stat-value" id="date-range-days">181 days</div>
+                </div>
+            </div>
+        </section>
+    </aside>
+
+    <main class="main-content">
+        <section class="chart-section">
+            <div class="section-header">
+                <h2>Sales by Item</h2>
+                <span class="badge" id="chart-badge">8 items</span>
+            </div>
+            <figure id="chart"></figure>
+        </section>
+
+        <section class="table-section">
+            <div class="section-header">
+                <h2>Transaction Details</h2>
+                <nav class="pagination">
+                    <button id="first" title="First page">⟪</button>
+                    <button id="prev" title="Previous page">‹</button>
+                    <span id="page-info">Page 1 of 1</span>
+                    <button id="next" title="Next page">›</button>
+                    <button id="last" title="Last page">⟫</button>
+                </nav>
+            </div>
+            <div class="table-container">
+                <table id="table"></table>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script type="module" src="./src/index.js"></script>
+</body>
+</html>
