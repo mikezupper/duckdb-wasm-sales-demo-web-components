@@ -1,38 +1,36 @@
-# DuckDB Sales Demo
+# DuckDB Sales Dashboard Demo
 
-A simple web-based data explorer built with DuckDB in WebAssembly (WASM). This demo application allows users to filter and visualize randomly generated sales data for various fruits, featuring a date range slider, multi-select item filter, paginated table, and a bar chart summarizing totals by item.
-
-The app runs entirely in the browser, leveraging DuckDB for efficient querying without a backend server.
+A reactive in-browser sales data explorer built with DuckDB WASM, Lit web components, RxJS, and D3. Demonstrates client-side data processing with a persistent IndexedDB-backed database, interactive filters, pagination, and visualizations—all without a backend server.
 
 ## Features
 
-- **In-Browser Database**: Uses DuckDB WASM for creating, seeding, and querying a sales table.
-- **Random Data Seeding**: Generates 200 random sales records for fruits like Apples, Bananas, etc., between January 1, 2025, and June 30, 2025.
-- **Filters**:
-    - Dual-handle date range slider for selecting start and end dates.
-    - Multi-select dropdown for filtering by specific items (or all items).
-    - Rows per page selection for table pagination.
-- **Summary Stats**: Displays total records and the number of days in the selected date range.
-- **Visualization**: D3.js bar chart showing aggregated sales amounts by item.
-- **Paginated Table**: Displays transaction details (date, item, amount) with navigation controls (first, previous, next, last).
-- **Responsive Design**: Adapts to different screen sizes, with dark mode support via prefers-color-scheme.
-- **Worker-Based Architecture**: Database operations run in a Web Worker using Comlink for seamless communication.
+- **Interactive Filters**: Multi-select dropdown for items (fruits) and a dual-handle date range slider.
+- **Real-time Stats**: Displays total records, date range duration, and item count badges.
+- **Paginated Table**: Sortable transaction details with client-side or server-side pagination (via DuckDB queries).
+- **D3 Bar Chart**: Visualizes aggregated sales by item with smooth transitions.
+- **Reactive Architecture**: Uses RxJS for state management and automatic UI updates on filter changes.
+- **Persistent Data**: Seeds random sales data into a DuckDB database stored in IndexedDB for persistence across sessions.
+- **Web Workers**: Offloads database operations to a worker thread using Comlink.
+- **Light DOM Components**: All UI components use light DOM for easier styling and integration.
+- **Dark Mode Support**: Automatically adapts to system preferences via CSS media queries.
+- **Accessible & Performant**: ARIA labels, keyboard navigation, and optimized queries for large datasets.
 
 ## Tech Stack
 
-- **Database**: DuckDB WASM (@duckdb/duckdb-wasm)
-- **Charting**: D3.js
-- **Worker Communication**: Comlink
-- **Build Tool**: Vite (with plugins for WASM and top-level await)
-- **Styling**: CSS with layered architecture (reset, base, layout, etc.)
-- **Other Libraries**: RxJS (though not heavily used in core logic)
+- **Database**: DuckDB via WASM (@duckdb/duckdb-wasm) for SQL queries in the browser.
+- **UI Components**: Lit for lightweight web components.
+- **Charting**: D3.js for the bar chart.
+- **State Management**: RxJS for reactive streams and view-model pattern.
+- **Workers**: Comlink for seamless worker communication.
+- **Build Tool**: Vite with WASM and top-level await plugins.
+- **Other**: CSS layers for modular styling, no external UI frameworks.
 
 ## Installation
 
 1. Clone the repository:
    ```
-   git clone <repository-url>
-   cd duckdb-sales-demo-web-components
+   git clone https://github.com/your-username/duckdb-sales-demo.git
+   cd duckdb-sales-demo
    ```
 
 2. Install dependencies:
@@ -40,58 +38,47 @@ The app runs entirely in the browser, leveraging DuckDB for efficient querying w
    npm install
    ```
 
+3. Run the development server:
+   ```
+   npm run dev
+   ```
+   Open http://localhost:5173 in your browser.
+
+4. Build for production:
+   ```
+   npm run build
+   ```
+
+5. Preview the build:
+   ```
+   npm run preview
+   ```
+
 ## Usage
 
-### Development
-Run the development server:
-```
-npm run dev
-```
-This starts Vite's dev server with hot module replacement. Open `http://localhost:5173` in your browser.
+- The app seeds 200 random sales records for fruits (Apples, Bananas, etc.) between January 1, 2025, and June 30, 2025, on first load.
+- Use the sidebar filters to select items and adjust the date range—UI updates reactively.
+- Navigate the paginated table using the controls.
+- The bar chart shows aggregated sales totals by item.
+- Data persists in IndexedDB; refresh the page to see it retained.
+- To reseed data or experiment, modify the `bootstrap()` function in `index.js`.
 
-### Build
-Build for production:
-```
-npm run build
-```
-Outputs are placed in the `dist` folder.
+## Architecture Overview
 
-### Preview
-Preview the production build locally:
-```
-npm run preview
-```
-Or use the alias:
-```
-npm run serve
-```
-This serves the build on `http://localhost:4173`.
+- **db-worker.js**: Handles DuckDB initialization, seeding, and queries in a web worker. Exposes methods via Comlink.
+- **view-model.js**: Central RxJS-based ViewModel managing state (date range, selections, pagination) and deriving data streams.
+- **connect-mixin.js**: Mixin to connect Lit components to the ViewModel, mapping state streams to props and actions to methods.
+- **Components** (in `components/`): Pure presentational web components like `data-table`, `stat-card`, `date-range-slider`, `multi-select-dropdown`, and `chart-section`.
+- **index.js**: Wires everything together—registers components, sets up the ViewModel, and bootstraps the app.
+- **index.html & style.css**: Layout and global styles using CSS grid and layers.
 
-## Scripts
+This setup follows a unidirectional data flow: User actions → ViewModel mutations → Derived queries → UI updates.
 
-- `npm run dev`: Start development server.
-- `npm run build`: Build for production.
-- `npm run preview`: Preview production build.
-- `npm run serve`: Alias for preview on port 4173.
+For multi-fruit selections, queries are parallelized per fruit, combined client-side, and paginated.
 
-## Project Structure
+## Contributing
 
-- `index.html`: Main HTML structure with filters, stats, chart, and table sections.
-- `index.js`: Application logic, including worker setup, UI event handlers, and data refresh.
-- `db-worker.js`: Web Worker for DuckDB initialization, seeding, and queries (count, paginated, aggregate).
-- `chart.js`: D3-based bar chart initialization and update functions.
-- `table.js`: Simple table rendering function.
-- `style.css`: Layered CSS for styling and responsiveness.
-- `vite.config.js`: Vite configuration with WASM and top-level await plugins.
-- `package.json`: Dependencies and scripts.
-
-## Notes
-
-- **Data Generation**: The app seeds 200 random rows on load. Dates are ISO-formatted, items are from a predefined list, and amounts are random integers between 5 and 45.
-- **Querying**: Supports filtering by date range and multiple items. For multiple items, results are combined and sorted client-side.
-- **Browser Support**: Requires modern browsers with WebAssembly and Worker support. Tested on Chrome, Firefox, and Safari.
-- **Debugging**: Console logs are included in worker and main scripts for tracking initialization, queries, and updates.
-- **Limitations**: No persistent storage; data is in-memory and resets on reload. Pagination for multi-item filters fetches all data upfront (up to 1000 rows per item) for client-side sorting.
+Contributions welcome! Please open an issue or PR for bugs, features, or improvements. Ensure code follows ES modules and reactive patterns.
 
 ## License
 
