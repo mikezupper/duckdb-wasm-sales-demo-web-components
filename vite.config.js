@@ -1,9 +1,6 @@
 import { defineConfig } from 'vite';
-import wasm from "vite-plugin-wasm";
-import topLevelAwait from "vite-plugin-top-level-await";
 
 export default defineConfig({
-    plugins:[wasm(),topLevelAwait()],
     build: {
         target: 'esnext',
         rollupOptions: {
@@ -13,22 +10,12 @@ export default defineConfig({
         }
     },
     worker: {
-        format: 'es',
-        plugins: () => [wasm(), topLevelAwait()]
+        format: 'es'
     },
     optimizeDeps: {
-        exclude: ['@duckdb/duckdb-wasm'],
-        esbuildOptions: {
-            target: 'esnext',
-            supported: {
-                'top-level-await': true
-            }
-        }
+        exclude: ['@duckdb/duckdb-wasm']
     },
     esbuild: {
-        target: 'esnext',
-        supported: {
-            'top-level-await': true
-        }
+        target: 'esnext'
     }
 });

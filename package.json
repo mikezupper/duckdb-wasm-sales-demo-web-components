@@ -10,14 +10,13 @@
     "serve": "vite preview --port 4173"
   },
   "dependencies": {
-    "@duckdb/duckdb-wasm": "^1.30.0",
+    "@duckdb/duckdb-wasm": "^1.32.0",
     "comlink": "^4.4.2",
     "d3": "^7.9.0",
-    "rxjs": "^7.8.2",
-    "vite-plugin-top-level-await": "^1.6.0",
-    "vite-plugin-wasm": "^3.5.0"
+    "lit": "^3.3.3",
+    "rxjs": "^7.8.2"
   },
   "devDependencies": {
-    "vite": "^7.0.5"
+    "vite": "^8.2.1"
   }
 }
